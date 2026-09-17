@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A random joke generator powered by an external API." />
+    <title>Joke Jar | Random Joke Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="eyebrow"><span class="sparkle" aria-hidden="true">✦</span> A little joy on demand</div>
+        <h1 id="page-title">Joke <span>Jar</span></h1>
+        <p class="subtitle">Shake out a fresh joke whenever you need a smile.</p>
+      </section>
+
+      <section class="joke-card" aria-live="polite" aria-atomic="true">
+        <div class="card-topline">
+          <span id="category" class="category">READY FOR A JOKE?</span>
+          <button id="copy-button" class="icon-button" type="button" aria-label="Copy joke" title="Copy joke" disabled>⧉</button>
+        </div>
+        <div id="joke-content" class="joke-content">
+          <p class="placeholder">Your next laugh is just a click away.</p>
+        </div>
+        <p id="error-message" class="error-message" role="alert" hidden></p>
+      </section>
+
+      <button id="joke-button" class="primary-button" type="button">
+        <span id="button-label">Get a joke</span>
+        <span class="button-arrow" aria-hidden="true">→</span>
+      </button>
+
+      <p class="source-note">Powered by <a href="https://jokeapi.dev/" target="_blank" rel="noreferrer">JokeAPI</a> · Safe for work</p>
+    </main>
+    <script src="app.js" defer></script>
+  </body>
+</html>
