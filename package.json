@@ -1,0 +1,14 @@
+{
+  "name": "industrial-erp-case-study",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm --workspace backend run dev",
+    "dev:frontend": "npm --workspace frontend run dev",
+    "test": "npm --workspace backend test"
+  }
+}

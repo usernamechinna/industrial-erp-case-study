@@ -1,25 +1,125 @@
-# Random Joke Generator
+# Industrial ERP Case Study
 
-A small browser-based random joke generator powered by [JokeAPI](https://jokeapi.dev/). It supports both one-liner and two-part jokes, provides loading/error states, and lets users copy the current joke.
+This repository contains a practical PERN-stack ERP starter for the workflow:
 
-## Run locally
+Customer Enquiry → Quotation → Sales Order → Inventory Reservation → Dispatch
 
-No build step is required. Open `index.html` in a browser, or serve the directory with any static server:
+## Tech stack
 
-```bash
-npx serve .
+- PostgreSQL
+- Express.js
+- React.js
+- Node.js
+- Sequelize ORM
+- JWT authentication
+- Backend role-based access control
+- Jest + Supertest
+
+## Project structure
+
+```text
+backend/        Express API and business logic
+frontend/       React application with the required screens
+docs/           ER diagram and API documentation
 ```
 
-Then visit the URL shown by the server. An internet connection is required because jokes are loaded from the external API.
+## Quick start
 
-## Files
+1. Copy environment files:
 
-- `index.html` — accessible application markup
-- `styles.css` — responsive styling
-- `app.js` — API integration, rendering, and copy interaction
+```bash
+cp .env.example .env
+cp backend/.env.example backend/.env
+```
 
-## API
+2. Configure PostgreSQL connection values in `backend/.env`.
 
-Requests use JokeAPI's safe-mode endpoint:
+3. Install dependencies:
 
-`GET https://v2.jokeapi.dev/joke/Any?safe-mode&type=single,twopart`
+```bash
+npm install
+```
+
+4. Run backend:
+
+```bash
+npm run dev:backend
+```
+
+5. Run frontend:
+
+```bash
+npm run dev:frontend
+```
+
+## PostgreSQL setup
+
+Create a database and user, then set:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=erp_case_study
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_DIALECT=postgres
+JWT_SECRET=change_this_secret
+```
+
+Database schema is modeled around entities such as:
+
+- users
+- customers
+- products
+- inventory
+- enquiries
+- enquiry_items
+- quotations
+- quotation_items
+- sales_orders
+- sales_order_items
+- dispatches
+- dispatch_items
+
+## Migrations and seed data
+
+The project includes a SQL-first design pattern and seed data examples in the backend. In a real database environment, run:
+
+```bash
+npx sequelize-cli db:migrate
+npx sequelize-cli db:seed:all
+```
+
+## Default login credentials
+
+- Admin: `admin@erp.local` / `Admin@123`
+- Sales user: `sales@erp.local` / `Sales@123`
+
+## Core business rules implemented
+
+- JWT auth with password hashing
+- Backend RBAC (ADMIN vs SALES_USER)
+- Quotation totals are calculated server-side
+- Draft or rejected quotations cannot create sales orders
+- Duplicate order generation is prevented
+- Inventory reservation checks available stock
+- Reservation and dispatch operations use transactional logic in PostgreSQL
+- Simultaneous stock requests are handled by `SELECT ... FOR UPDATE`
+
+## API summary
+
+See `docs/api.md` for endpoint details.
+
+## ER diagram
+
+See `docs/erd.md` for the schema diagram.
+
+## Running tests
+
+```bash
+npm test
+```
+
+## Demo video
+
+A short demo recording is expected for the final candidate submission. A placeholder script and checklist are included in `docs/demo-video.md`.
