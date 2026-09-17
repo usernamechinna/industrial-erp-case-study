@@ -1,72 +1,28 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { seedUsers } = require('../utils/seed');
-const { authorizeRole } = require('../utils/stock');
-require('dotenv').config();
+const { User } = require('../models');
 
 const router = express.Router();
 
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body || {};
-  const user = seedUsers.find(item => item.email.toLowerCase() === String(email || '').toLowerCase());
-
-  if (!user) {
-    return res.status(401).json({ message: 'Invalid email or password' });
-  }
-
-  const validPassword = await bcrypt.compare(String(password || ''), user.passwordHash);
-  if (!validPassword) {
-    return res.status(401).json({ message: 'Invalid email or password' });
-  }
-
-  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET || 'dev-secret', {
-    expiresIn: '8h'
-  });
-
-  return res.json({
-    token,
-    user: {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      name: user.name
-    }
-  });
-});
-
-router.get('/me', (req, res) => {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-
-  if (!token) {
-    return res.status(401).json({ message: 'Authentication required' });
-  }
-
+router.post('/login', async (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
-    return res.json({ user: decoded });
-  } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
-  }
-});
+    const { email, password } = req.body || {};
+    if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });
 
-router.get('/admin-only', (req, res) => {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-
-  if (!token) {
-    return res.status(401).json({ message: 'Authentication required' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
-    if (!authorizeRole(decoded, ['ADMIN'])) {
-      return res.status(403).json({ message: 'Forbidden: admin access required' });
+    const user = await User.findOne({ where: { email: String(email).toLowerCase().trim() } });
+    if (!user || !(await bcrypt.compare(String(password), user.passwordHash))) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
-    return res.json({ message: 'Admin access granted' });
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role, name: user.name },
+      process.env.JWT_SECRET || 'dev-secret',
+      { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
+    );
+    return res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    return next(error);
   }
 });
 

@@ -1,7 +1,6 @@
-function requireRole(...allowedRoles) {
+function requireRole(...roles) {
   return (req, res, next) => {
-    const role = req.user && req.user.role;
-    if (!role || !allowedRoles.includes(role)) {
+    if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({ message: 'Forbidden: insufficient privileges' });
     }
     return next();
